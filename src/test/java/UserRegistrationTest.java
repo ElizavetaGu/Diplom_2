@@ -23,6 +23,8 @@ public class UserRegistrationTest {
     public void checkUserCanBeCreated(){
         user = getRandom();
         ValidatableResponse response = userClient.create(user);
+        String accessToken = response.extract().path("accessToken");
+        accessToken = accessToken.substring(7);
 
         int statusCode = response.extract().statusCode();
         assertThat("Status code is not 200", statusCode, equalTo(200));
@@ -30,8 +32,9 @@ public class UserRegistrationTest {
         boolean isUserCreated = response.extract().path("success");
         assertTrue("User is not created", isUserCreated);
 
-        String accessToken = response.extract().path("accessToken");
         assertNotNull("Access Token is null", accessToken);
+
+        userClient.delete(accessToken);
     }
 
     @Test

@@ -2,6 +2,7 @@ import client.UserClient;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import model.User;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,6 +25,11 @@ public class UserDataUpdateWithAuthTest {
         user = getRandom();
         accessToken = userClient.create(user).extract().path("accessToken");
         accessToken = accessToken.substring(7);
+    }
+
+    @After
+    public void tearDown(){
+        userClient.delete(accessToken);
     }
 
     @Test

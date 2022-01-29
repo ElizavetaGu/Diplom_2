@@ -58,6 +58,8 @@ public class OrderCreationTest {
 
         String userName = response.extract().path("order.owner.name");
         assertNotNull("User name is null", userName);
+
+        userClient.delete(accessToken);
     }
 
     @Test

@@ -3,6 +3,7 @@ import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import model.User;
 import model.UserDataGenerator;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -12,12 +13,19 @@ import static org.junit.Assert.*;
 public class UserLoginTest {
     private UserClient userClient;
     private User user;
+    private String accessToken;
 
     @Before
     public void setUp(){
         userClient = new UserClient();
         user = UserDataGenerator.getRandom();
-        userClient.create(user);
+        accessToken = userClient.create(user).extract().path("accessToken");
+        accessToken = accessToken.substring(7);
+    }
+
+    @After
+    public void tearDown(){
+        userClient.delete(accessToken);
     }
 
     @Test

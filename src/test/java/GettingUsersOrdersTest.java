@@ -4,6 +4,7 @@ import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import model.User;
 import model.UserDataGenerator;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -13,6 +14,8 @@ import static org.junit.Assert.assertTrue;
 
 public class GettingUsersOrdersTest {
     private OrderClient orderClient;
+    private UserClient userClient;
+    private String accessToken;
 
     @Before
     public void setUp(){
@@ -22,9 +25,9 @@ public class GettingUsersOrdersTest {
     @Test
     @DisplayName("Check that an authorized user can get its orders")
     public void checkAuthUserCanGetOrders(){
-        UserClient userClient = new UserClient();
+        userClient = new UserClient();
         User user = UserDataGenerator.getRandom();
-        String accessToken = userClient.create(user).extract().path("accessToken");
+        accessToken = userClient.create(user).extract().path("accessToken");
         accessToken = accessToken.substring(7);
 
         ValidatableResponse response = orderClient.get(accessToken);
@@ -34,6 +37,8 @@ public class GettingUsersOrdersTest {
 
         boolean hasGotTheOrders = response.extract().path("success");
         assertTrue("Authorized user has not got the orders", hasGotTheOrders);
+
+        userClient.delete(accessToken);
     }
 
     @Test
